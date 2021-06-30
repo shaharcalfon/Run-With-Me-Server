@@ -1,9 +1,9 @@
 const express = require('express');
 
-const groupRouter = require('./routes/groupRouter');
-const groupRunRouter = require('./routes/groupRunRouter');
-const runRouter = require('./routes/runRouter');
-const userRouter = require('./routes/userRouter');
+const groupRouter = require('./routes/groupRoutes');
+const groupRunRouter = require('./routes/groupRunRoutes');
+const runRouter = require('./routes/runRoutes');
+const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
