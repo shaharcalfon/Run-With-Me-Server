@@ -13,6 +13,7 @@ const groupSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.ObjectId,
       ref: 'GroupRun',
+      default: [],
     },
   ],
   groupMembers: [
