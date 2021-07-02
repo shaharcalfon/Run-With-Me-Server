@@ -1,5 +1,7 @@
 const express = require('express');
 
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
 const groupRouter = require('./routes/groupRoutes');
 const groupRunRouter = require('./routes/groupRunRoutes');
 const runRouter = require('./routes/runRoutes');
@@ -21,10 +23,9 @@ app.use('/run-with-me/users', userRouter);
 
 //Handle for unknown URL.
 app.all('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'fail',
-    message: `Cant find ${req.originalUrl} on this server`,
-  });
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+app.use(globalErrorHandler);
 
 module.exports = app;
