@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -9,6 +10,7 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.use((req, res, next) => {
