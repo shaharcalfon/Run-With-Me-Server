@@ -25,11 +25,8 @@ const createSendToken = (user, statusCode, res) => {
   user.password = undefined;
 
   res.status(statusCode).json({
-    status: 'success',
     token,
-    data: {
-      user,
-    },
+    user,
   });
 };
 

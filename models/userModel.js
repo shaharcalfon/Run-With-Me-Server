@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide a password'],
   },
+  imageProfileURL: String,
   runs: [
     {
       type: mongoose.Schema.ObjectId,

@@ -8,6 +8,11 @@ const runSchema = new mongoose.Schema({
   date: Date,
   startTime: Date,
   endTime: Date,
+  runType: {
+    type: String,
+    enum: ['personal', 'group'],
+    default: 'personal',
+  },
   runData: {
     type: mongoose.Schema.ObjectId,
     ref: 'RunData',

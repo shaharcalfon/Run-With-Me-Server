@@ -4,8 +4,7 @@ const runDataSchema = new mongoose.Schema({
   distance: Number,
   steps: Number,
   averageSpeed: Number,
-  endTime: Date,
-  runData: {
+  route: {
     type: mongoose.Schema.ObjectId,
     ref: 'RunRoute',
   },
