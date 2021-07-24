@@ -18,3 +18,14 @@ exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    user: updatedUser,
+  });
+});

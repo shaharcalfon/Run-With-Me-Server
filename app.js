@@ -1,6 +1,14 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 
+require('./models/routeModel');
+require('./models/groupRunDataModel');
+require('./models/groupRunModel');
+require('./models/runDataModel');
+require('./models/runModel');
+require('./models/groupModel');
+require('./models/userModel');
+
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const groupRouter = require('./routes/groupRoutes');

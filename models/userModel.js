@@ -2,41 +2,54 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: [true, 'Please insert your first name!'],
-  },
-  lastName: {
-    type: String,
-    required: [true, 'Please insert your last npname!'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-  },
-  imageProfileURL: String,
-  runs: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Run',
-      default: [],
+const userSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, 'Please insert your first name!'],
     },
-  ],
-  groups: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Group',
-      default: [],
+    lastName: {
+      type: String,
+      required: [true, 'Please insert your last npname!'],
     },
-  ],
-});
+    email: {
+      type: String,
+      required: [true, 'Please provide your email'],
+      unique: true,
+      validate: [validator.isEmail, 'Please provide a valid email'],
+    },
+    password: {
+      type: String,
+      required: [true, 'Please provide a password'],
+    },
+    photoUri: {
+      type: String,
+      default: '',
+    },
+    friends: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        default: [],
+      },
+    ],
+    runs: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Run',
+        default: [],
+      },
+    ],
+    groups: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Group',
+        default: [],
+      },
+    ],
+  },
+  { versionKey: false }
+);
 
 userSchema.pre('save', async function (next) {
   // Only run this function if password was actually modified
@@ -53,6 +66,12 @@ userSchema.methods.correctPassword = async function (
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
+
+userSchema.pre(/^find/, function (next) {
+  this.populate(['runs', 'groups', 'friends']);
+
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 
