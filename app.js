@@ -19,7 +19,7 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 app.use((req, res, next) => {
   console.log('Hello from the middleware 👋');

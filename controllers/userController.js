@@ -24,8 +24,33 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
-
   res.status(200).json({
     user: updatedUser,
+  });
+});
+
+exports.addFriend = catchAsync(async (req, res, next) => {
+  const newFriendList = req.user.runs;
+  newFriendList.push(req.query.friendId);
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, newFriendList, {
+    new: true,
+  });
+
+  const newFriend = await User.findById(req.query.friendId);
+
+  await User.findByIdAndUpdate(
+    req.query.friendId,
+    newFriend.runs.push(req.user.id)
+  );
+  res.status(200).json({
+    user: updatedUser,
+  });
+});
+
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
+
+  res.status(200).json({
+    users,
   });
 });
