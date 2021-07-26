@@ -30,18 +30,23 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 });
 
 exports.addFriend = catchAsync(async (req, res, next) => {
-  const newFriendList = req.user.runs;
+  const newFriendList = req.user.friends;
   newFriendList.push(req.query.friendId);
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, newFriendList, {
-    new: true,
-  });
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    { friends: newFriendList },
+    {
+      new: true,
+    }
+  );
 
   const newFriend = await User.findById(req.query.friendId);
+  const newFriendNewFriendlist = newFriend.friends;
+  newFriendNewFriendlist.push(req.user.id);
+  await User.findByIdAndUpdate(req.query.friendId, {
+    friends: newFriendNewFriendlist,
+  });
 
-  await User.findByIdAndUpdate(
-    req.query.friendId,
-    newFriend.runs.push(req.user.id)
-  );
   res.status(200).json({
     user: updatedUser,
   });
