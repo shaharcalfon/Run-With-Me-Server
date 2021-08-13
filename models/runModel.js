@@ -1,22 +1,31 @@
 const mongoose = require('mongoose');
 
-const runSchema = new mongoose.Schema({
-  User: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
+const runSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    },
+    date: Date,
+    startTime: Date,
+    endTime: Date,
+    runType: {
+      type: String,
+      enum: ['PERSONAL', 'GROUP'],
+      default: 'PERSONAL',
+    },
+    runData: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'RunData',
+    },
   },
-  date: Date,
-  startTime: Date,
-  endTime: Date,
-  runType: {
-    type: String,
-    enum: ['personal', 'group'],
-    default: 'personal',
-  },
-  runData: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'RunData',
-  },
+  { versionKey: false }
+);
+
+runSchema.pre(/^find/, function (next) {
+  this.populate('runData');
+
+  next();
 });
 
 const Run = mongoose.model('Run', runSchema);

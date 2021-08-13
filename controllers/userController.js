@@ -29,6 +29,13 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    users: users,
+  });
+});
+
 exports.addFriend = catchAsync(async (req, res, next) => {
   const newFriendList = req.user.friends;
   newFriendList.push(req.query.friendId);
@@ -39,7 +46,6 @@ exports.addFriend = catchAsync(async (req, res, next) => {
       new: true,
     }
   );
-
   const newFriend = await User.findById(req.query.friendId);
   const newFriendNewFriendlist = newFriend.friends;
   newFriendNewFriendlist.push(req.user.id);
@@ -52,10 +58,40 @@ exports.addFriend = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
+exports.getMyFriends = catchAsync(async (req, res, next) => {
+  const friends = await User.findById(req.user.id)
+    .select('friends')
+    .populate('friends', '-password');
 
   res.status(200).json({
-    users,
+    myFriends: friends.friends,
+  });
+});
+
+exports.deleteFriend = catchAsync(async (req, res, next) => {
+  const newFriendList = req.user.friends;
+  const friendIndex = newFriendList.indexOf(req.query.friendId);
+  if (friendIndex > -1) {
+    newFriendList.splice(friendIndex, 1);
+  }
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    { friends: newFriendList },
+    {
+      new: true,
+    }
+  );
+  const friendToDelete = await User.findById(req.query.friendId);
+  const friendToDeleteNewFriendlist = friendToDelete.friends;
+  const myIndex = friendToDeleteNewFriendlist.indexOf(req.user.id);
+  if (myIndex > -1) {
+    friendToDeleteNewFriendlist.splice(myIndex, 1);
+  }
+  await User.findByIdAndUpdate(req.query.friendId, {
+    friends: friendToDeleteNewFriendlist,
+  });
+
+  res.status(200).json({
+    user: updatedUser,
   });
 });

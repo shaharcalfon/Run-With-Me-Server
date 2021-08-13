@@ -68,7 +68,7 @@ userSchema.methods.correctPassword = async function (
 };
 
 userSchema.pre(/^find/, function (next) {
-  this.populate(['runs', 'groups', 'friends']);
+  this.populate('runs');
 
   next();
 });

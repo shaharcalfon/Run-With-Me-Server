@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(express.json({ limit: '50mb' }));
 
 app.use((req, res, next) => {
-  console.log('Hello from the middleware 👋');
+  console.log(`Hello from the middleware 👋 ${req.url}`);
   next();
 });
 

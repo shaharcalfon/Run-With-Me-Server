@@ -11,7 +11,13 @@ userRouter.get('/check-token', authController.verifyToken);
 // Protect all routes after this middleware
 userRouter.use(authController.protect);
 
-userRouter.patch('/updateMe', userController.updateMe);
+userRouter.patch('/add-friend', userController.addFriend);
+
+userRouter.patch('/delete-friend', userController.deleteFriend);
+
+userRouter.get('/my-friends', userController.getMyFriends);
+
+userRouter.patch('/update-me', userController.updateMe);
 
 userRouter.get('/me', userController.getMe, userController.getUser);
 

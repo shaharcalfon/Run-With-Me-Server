@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 
-const routeSchema = new mongoose.Schema({
-  coordinates: [[Number]],
-});
+const routeSchema = new mongoose.Schema(
+  {
+    coordinates: [[Number]],
+  },
+  { versionKey: false }
+);
 
 const Route = mongoose.model('RunRoute', routeSchema);
 
