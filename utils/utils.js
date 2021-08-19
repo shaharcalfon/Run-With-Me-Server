@@ -29,3 +29,17 @@ exports.createDate = (time) => {
 
   return date;
 };
+exports.createDateFromTimeAndDate = (date, time) => {
+  const result = new Date();
+  const splitDate = date.split('/');
+  result.setFullYear(splitDate[2]);
+  result.setMonth(splitDate[1] * 1 - 1);
+  result.setDate(splitDate[0]);
+
+  const spiltTime = time.split(':');
+  result.setHours(spiltTime[0] * 1 + 3);
+  result.setMinutes(spiltTime[1]);
+  result.setSeconds(0);
+
+  return result;
+};

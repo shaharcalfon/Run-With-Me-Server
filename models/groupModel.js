@@ -32,11 +32,11 @@ const groupSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-groupSchema.pre(/^find/, function (next) {
-  this.populate('groupMembers');
+// groupSchema.pre(/^find/, function (next) {
+//   this.populate('groupMembers');
 
-  next();
-});
+//   next();
+// });
 
 const Group = mongoose.model('Group', groupSchema);
 
