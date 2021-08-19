@@ -1,6 +1,8 @@
 const Run = require('../models/runModel');
 const RunData = require('../models/runDataModel');
 const Route = require('../models/routeModel');
+const GroupRun = require('../models/groupRunModel');
+const GroupRunData = require('../models/groupRunDataModel');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const utils = require('../utils/utils');
@@ -22,6 +24,14 @@ exports.saveRun = catchAsync(async (req, res, next) => {
     endTime: utils.createDate(req.body.endTime),
     runType: req.body.runType,
     runData: newRunData,
+  });
+
+  const groupRun = await GroupRun.findById(req.body.groupRunId);
+  const groupRunData = await GroupRunData.findById(groupRun.groupRunData);
+  const newMembersRuns = groupRunData.membersRuns;
+  newMembersRuns.push(newRun);
+  await GroupRunData.findByIdAndUpdate(groupRunData, {
+    membersRuns: newMembersRuns,
   });
 
   const newRunList = req.user.runs;

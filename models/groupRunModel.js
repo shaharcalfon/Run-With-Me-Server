@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const groupRunSchema = new mongoose.Schema(
   {
+    group: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Group',
+    },
     runners: [
       {
         type: mongoose.Schema.ObjectId,
@@ -18,7 +22,6 @@ const groupRunSchema = new mongoose.Schema(
     groupRunData: {
       type: mongoose.Schema.ObjectId,
       ref: 'GroupRunData',
-      default: [],
     },
   },
   { versionKey: false }

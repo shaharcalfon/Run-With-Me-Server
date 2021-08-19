@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/run-with-me/groups', groupRouter);
-app.use('/run-with-me/groups-run', groupRunRouter);
+app.use('/run-with-me/group-runs', groupRunRouter);
 app.use('/run-with-me/runs', runRouter);
 app.use('/run-with-me/users', userRouter);
 

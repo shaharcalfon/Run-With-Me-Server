@@ -16,7 +16,6 @@ const addGroupToMember = async function (memberId, newGroup) {
 exports.saveGroup = catchAsync(async (req, res, next) => {
   const newGroupMembersIds = req.body.groupMembers;
   newGroupMembersIds.push(req.user.id);
-  console.log(newGroupMembersIds);
   const newGroup = await Group.create({
     name: req.body.name,
     description: req.body.description,
@@ -36,9 +35,22 @@ exports.saveGroup = catchAsync(async (req, res, next) => {
 exports.getMyGroups = catchAsync(async (req, res, next) => {
   const groups = await User.findById(req.user.id)
     .select('groups -_id -runs')
-    .populate('groups', '-password');
-
-  console.log(groups.groups);
+    .populate({
+      path: 'groups',
+      populate: [
+        { path: 'groupMembers', select: '-password -runs' },
+        {
+          path: 'groupRuns',
+          populate: [
+            {
+              path: 'group',
+              select: '-photoUri -groupRuns -groupMembers',
+            },
+            { path: 'groupRunData' },
+          ],
+        },
+      ],
+    });
 
   res.status(200).json({
     myGroups: groups.groups,
