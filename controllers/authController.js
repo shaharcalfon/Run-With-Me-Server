@@ -66,11 +66,20 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
   if (!userToken) {
     return next(new AppError('Please provide the token', 400));
   }
-  if (!(await promisify(jwt.verify)(userToken, process.env.JWT_SECRET))) {
+  const decoded = await promisify(jwt.verify)(
+    userToken,
+    process.env.JWT_SECRET
+  );
+
+  // 3) Check if user still exists
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
     isValidToken = false;
   }
   res.status(200).json({
     isValidToken,
+    token: req.query.token,
+    user: currentUser,
   });
 });
 

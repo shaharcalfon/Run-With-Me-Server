@@ -26,13 +26,15 @@ exports.saveRun = catchAsync(async (req, res, next) => {
     runData: newRunData,
   });
 
-  const groupRun = await GroupRun.findById(req.body.groupRunId);
-  const groupRunData = await GroupRunData.findById(groupRun.groupRunData);
-  const newMembersRuns = groupRunData.membersRuns;
-  newMembersRuns.push(newRun);
-  await GroupRunData.findByIdAndUpdate(groupRunData, {
-    membersRuns: newMembersRuns,
-  });
+  if (req.body.groupRunId != null) {
+    const groupRun = await GroupRun.findById(req.body.groupRunId);
+    const groupRunData = await GroupRunData.findById(groupRun.groupRunData);
+    const newMembersRuns = groupRunData.membersRuns;
+    newMembersRuns.push(newRun);
+    await GroupRunData.findByIdAndUpdate(groupRunData, {
+      membersRuns: newMembersRuns,
+    });
+  }
 
   const newRunList = req.user.runs;
   newRunList.push(newRun);
@@ -52,8 +54,6 @@ exports.getMyRuns = catchAsync(async (req, res, next) => {
   const runs = await User.findById(req.user.id)
     .select('runs')
     .populate('runs', '-password');
-
-  console.log(runs.runs);
 
   res.status(200).json({
     myRuns: runs.runs,

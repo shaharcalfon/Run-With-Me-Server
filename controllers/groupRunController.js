@@ -65,14 +65,15 @@ const covertMinutesToAvgPaceString = (totalMinutes) => {
 };
 
 const calculateAndUpdateAverageStatistics = async (groupRun) => {
-  console.log(groupRun);
   let sumDistance = 0;
   let sumSteps = 0;
   let sumAveragePaceInMinutes = 0;
+  let averageDistance = 0;
+  let averageSteps = 0;
+  let averageOfAveragePace = 0;
 
   const runs = await groupRun.groupRunData.membersRuns;
   const numberOfRuns = runs.length;
-  console.log(numberOfRuns);
 
   for (let i = 0; i < runs.length; i += 1) {
     sumDistance += runs[i].runData.distance;
@@ -82,15 +83,28 @@ const calculateAndUpdateAverageStatistics = async (groupRun) => {
     );
   }
 
-  const averageDistance = sumDistance / numberOfRuns;
-  const averageSteps = sumSteps / numberOfRuns;
-  const averageOfAveragePace = sumAveragePaceInMinutes / numberOfRuns;
+  if (numberOfRuns > 0) {
+    averageDistance = sumDistance / numberOfRuns;
+    averageSteps = sumSteps / numberOfRuns;
+    averageOfAveragePace = sumAveragePaceInMinutes / numberOfRuns;
+  }
 
   await GroupRunData.findByIdAndUpdate(groupRun.groupRunData, {
     averageDistance: averageDistance,
     averageSteps: averageSteps,
     averageOfAveragePace: covertMinutesToAvgPaceString(averageOfAveragePace),
   });
+};
+
+const filterGroupRunWithData = (pastGroupRuns) => {
+  const result = [];
+  pastGroupRuns.forEach((pastGroupRun) => {
+    if (pastGroupRun.groupRunData.membersRuns.length > 0) {
+      result.push(pastGroupRun);
+    }
+  });
+
+  return result;
 };
 
 exports.getPastGroupRuns = catchAsync(async (req, res, next) => {
@@ -104,8 +118,9 @@ exports.getPastGroupRuns = catchAsync(async (req, res, next) => {
     .populate('groupRunData')
     .sort({ date: 1 });
 
+  const filterwdPastGroupRuns = filterGroupRunWithData(pastGroupRuns);
   //if the average statistics still not calculated we need to do it
-  pastGroupRuns.forEach((groupRun) => {
+  filterwdPastGroupRuns.forEach((groupRun) => {
     //check if the group run data have the defualt values
     if (
       groupRun.groupRunData.averageDistance === 0 &&
@@ -115,9 +130,10 @@ exports.getPastGroupRuns = catchAsync(async (req, res, next) => {
       calculateAndUpdateAverageStatistics(groupRun);
     }
   });
+  console.log(filterwdPastGroupRuns);
 
   res.status(200).json({
-    groupRuns: pastGroupRuns,
+    groupRuns: filterwdPastGroupRuns,
   });
 });
 
@@ -138,16 +154,15 @@ exports.getFutureGroupRuns = catchAsync(async (req, res, next) => {
 });
 
 exports.getTodayGroupRuns = catchAsync(async (req, res, next) => {
-  const today = new Date();
-  today.setHours(today.getHours() + 3);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 2);
-  tomorrow.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(now.getHours() + 3);
+  const nowPlusOneHour = new Date(now);
+  nowPlusOneHour.setHours(nowPlusOneHour.getHours() + 1);
 
   const groupRuns = await GroupRun.find({
     date: {
-      $gte: today,
-      $lte: tomorrow,
+      $gte: now,
+      $lte: nowPlusOneHour,
     },
     runners: { $elemMatch: { $eq: req.user.id } },
   })
