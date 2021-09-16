@@ -32,12 +32,6 @@ const groupSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-// groupSchema.pre(/^find/, function (next) {
-//   this.populate('groupMembers');
-
-//   next();
-// });
-
 const Group = mongoose.model('Group', groupSchema);
 
 module.exports = Group;

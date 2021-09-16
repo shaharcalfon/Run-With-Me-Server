@@ -2,10 +2,7 @@ const mongoose = require('mongoose');
 
 const runSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-    },
+    userName: String,
     date: Date,
     startTime: Date,
     endTime: Date,
