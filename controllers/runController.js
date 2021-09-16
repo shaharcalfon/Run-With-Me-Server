@@ -18,7 +18,7 @@ exports.saveRun = catchAsync(async (req, res, next) => {
     route: newRoute,
   });
   const newRun = await Run.create({
-    user: req.body.user,
+    userName: `${req.user.firstName} ${req.user.lastName}`,
     date: new Date(req.body.runDate),
     startTime: utils.createDate(req.body.startTime),
     endTime: utils.createDate(req.body.endTime),
@@ -46,7 +46,7 @@ exports.saveRun = catchAsync(async (req, res, next) => {
     }
   );
   res.status(200).json({
-    newRun,
+    newRun: newRun,
   });
 });
 

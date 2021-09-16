@@ -21,11 +21,6 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json({ limit: '50mb' }));
 
-app.use((req, res, next) => {
-  console.log(`Hello from the middleware 👋 ${req.url}`);
-  next();
-});
-
 app.use('/run-with-me/groups', groupRouter);
 app.use('/run-with-me/group-runs', groupRunRouter);
 app.use('/run-with-me/runs', runRouter);

@@ -71,7 +71,6 @@ const calculateAndUpdateAverageStatistics = async (groupRun) => {
   let averageDistance = 0;
   let averageSteps = 0;
   let averageOfAveragePace = 0;
-
   const runs = await groupRun.groupRunData.membersRuns;
   const numberOfRuns = runs.length;
 
@@ -108,10 +107,10 @@ const filterGroupRunWithData = (pastGroupRuns) => {
 };
 
 exports.getPastGroupRuns = catchAsync(async (req, res, next) => {
-  const now = new Date();
-  now.setHours(now.getHours() + 3);
+  const nowMinusOneHour = new Date();
+  nowMinusOneHour.setHours(nowMinusOneHour.getHours() + 2);
   const pastGroupRuns = await GroupRun.find({
-    date: { $lte: now.toISOString() },
+    date: { $lte: nowMinusOneHour.toISOString() },
     group: { $eq: req.query.groupId },
   })
     .populate('group', 'name')
@@ -130,7 +129,6 @@ exports.getPastGroupRuns = catchAsync(async (req, res, next) => {
       calculateAndUpdateAverageStatistics(groupRun);
     }
   });
-  console.log(filterwdPastGroupRuns);
 
   res.status(200).json({
     groupRuns: filterwdPastGroupRuns,
